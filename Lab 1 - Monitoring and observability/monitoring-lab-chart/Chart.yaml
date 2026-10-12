@@ -1,0 +1,16 @@
+apiVersion: v2
+name: monitoring-lab
+description: A Helm chart for monitoring lab
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: loki
+    version: "18.13.7"
+    repository: https://grafana-community.github.io/helm-charts
+  - name: promtail
+    version: "6.17.1"
+    repository: https://grafana.github.io/helm-charts
+  - name: jaeger
+    version: "4.14.0"
+    repository: https://jaegertracing.github.io/helm-charts

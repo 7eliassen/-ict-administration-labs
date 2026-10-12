@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}-api"
+  labels:
+    app: api
+    release: "{{ .Release.Name }}"
+spec:
+  replicas: {{ .Values.labService.replicaCount }}
+  selector:
+    matchLabels:
+      app: api
+      release: "{{ .Release.Name }}"
+  template:
+    metadata:
+      labels:
+        app: api
+        release: "{{ .Release.Name }}"
+    spec:
+      containers:
+      - name: api
+        image: "{{ .Values.labService.image.repository }}:{{ .Values.labService.image.tag }}"
+        imagePullPolicy: {{ .Values.labService.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.labService.service.port }}
+        env:
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: {{ .Values.labService.env.OTEL_EXPORTER_OTLP_ENDPOINT }}

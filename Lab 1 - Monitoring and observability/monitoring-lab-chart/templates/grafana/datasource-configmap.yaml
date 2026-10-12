@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-grafana-datasources"
+data:
+  prometheus.yaml: |
+    apiVersion: 1
+
+    datasources:
+      - name: Prometheus
+        uid: prometheus
+        type: prometheus
+        access: proxy
+        url: http://{{ .Release.Name }}-prometheus:9090
+        isDefault: true
+        editable: false
+      - name: Loki
+        uid: loki
+        type: loki
+        access: proxy
+        url: http://{{ .Release.Name }}-loki:3100
+        isDefault: false
+        editable: false

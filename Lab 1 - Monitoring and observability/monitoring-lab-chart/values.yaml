@@ -1,0 +1,86 @@
+labService:
+  image:
+    repository: ghcr.io/7eliassen/monitoring-lab
+    tag: "1.0.4"
+    pullPolicy: IfNotPresent
+  service:
+    port: 8000
+    nodePort: 30080
+  replicaCount: 1
+  env:
+    OTEL_EXPORTER_OTLP_ENDPOINT: "http://monitoring-lab-jaeger:4317"
+
+prometheus:
+  image:
+    tag: "v3.15.0"
+
+grafana:
+  image:
+    tag: "13.0"
+  service:
+    nodePort: 30030
+
+loki:
+  deploymentMode: Monolithic
+  persistence:
+    enabled: false
+  singleBinary:
+    replicas: 1
+  gateway:
+    enabled: false
+  chunksCache:
+    enabled: false
+  resultsCache:
+    enabled: false
+  lokiCanary:
+    enabled: false
+  test:
+    enabled: false
+  minio:
+    enabled: false
+  backend:
+    replicas: 0
+  read:
+    replicas: 0
+  write:
+    replicas: 0
+
+  loki:
+    auth_enabled: false
+    commonConfig:
+      replication_factor: 1
+    storage:
+      type: filesystem
+    schemaConfig:
+      configs:
+        - from: "2024-04-01"
+          store: tsdb
+          object_store: filesystem
+          schema: v13
+          index:
+            prefix: loki_index_
+            period: 24h
+    limits_config:
+      allow_structured_metadata: true
+      volume_enabled: true
+
+promtail:
+  config:
+    clients:
+      - url: http://monitoring-lab-loki:3100/loki/api/v1/push
+
+alertmanager:
+  image:
+    tag: "v0.34.1"
+  service:
+    nodePort: 30093
+  email_configs:
+    to: ""
+    from: ""
+    smarthost: ''
+    auth_username: ''
+    auth_password: ''
+
+jaeger:
+  service:
+    nodePort: 30086
